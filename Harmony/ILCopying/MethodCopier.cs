@@ -307,10 +307,16 @@ namespace Harmony.ILCopying
 			while (true)
 			{
 				var lastInstruction = codeInstructions.LastOrDefault();
-				if (lastInstruction == null || lastInstruction.opcode != OpCodes.Ret) break;
+				if (lastInstruction == null || lastInstruction.opcode != OpCodes.Ret)
+				{
+					// bug fix, when label is on last return, things may go wrong.
+					// chris, 2019.01.10
+					endLabels.AddRange(lastInstruction.labels);
+					break;
+				}
 
-				// remember any existing labels
-				endLabels.AddRange(lastInstruction.labels);
+			// remember any existing labels
+			endLabels.AddRange(lastInstruction.labels);
 
 				codeInstructions.RemoveAt(codeInstructions.Count - 1);
 			}
